@@ -1,0 +1,34 @@
+
+
+Hello Community Members, Need some help with DAX. Datasets showing last year's report. I need to create a DAX measure that calculates the percentage by gender of the Column total (in Yellow marked value). Somehow, the mind got faded, not getting the correct solution. I've created a DAX, not sure if this is correct or requires further tweak
+
+Total % = 
+VAR curmonth    =   month(max('TBL_L R'[Date])-31)
+VAR curyear     =   year(max('TBL_L R'[Date])-31)
+VAR gender      =   SELECTEDVALUE('TBL_L R'[Gender])
+VAR Female      =   countx(filter('TBL_L',
+                    year('TBL_L'[Date])=curyear 
+                    && month('TBL_L'[Date])=curmonth 
+                    && 'TBL_L'[Gender]=gender
+                    && 'TBL_L'[Gender] = "Female"
+                    ),
+                    TBL_L[Gender])
+VAR Male      =   countx(filter('TBL_L',
+                    year('TBL_L'[Date])=curyear 
+                    && month('TBL_L'[Date])=curmonth 
+                    && 'TBL_L'[Gender]=gender
+                    && 'TBL_L'[Gender] = "Male"
+                    ),
+                    TBL_L[Gender])
+VAR Total      =
+                    IF(SELECTEDVALUE ( 'TBL_L'[Gender] ) = "Female", 
+                    DIVIDE(Female, Female+Male), ALLEXCEPT('TBL_L R','TBL_L R'[Gender])) &&
+                    IF(SELECTEDVALUE ( 'TBL_L'[Gender] ) = "Male", 
+                    DIVIDE(Male, Female+Male), ALLEXCEPT('TBL_L R','TBL_L R'[Gender]))
+
+        RETURN 
+                    Total
+
+. Attached is the PBIX file. Any help. Please advise.
+
+
